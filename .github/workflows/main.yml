@@ -1,0 +1,20 @@
+name: trackapp
+
+on:
+    push:
+        branches:
+        - main
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v1
+
+        - name: Build and docker iamge
+          run:  docker build -t ${{ secrets.DOCKER_HUB_USERNAME}}/trackapp:latest .
+          
+        - name: push docker images to dockerhub
+          run: docker login -u ${{ secrets.DOCKER_HUB_USERNAME}} -p ${{ secrets.DOCKER_HUB_TOKEN}}
+               docker push ${{ secrets.DOCKER_HUB_USERNAME}}//trackapp:latest .
