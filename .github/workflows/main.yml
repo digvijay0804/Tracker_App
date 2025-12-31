@@ -1,20 +1,26 @@
 name: trackapp
 
 on:
-    push:
-        branches:
-        - main
+  push:
+    branches:
+      - main
 
 jobs:
-    build-and-deploy:
-        runs-on: ubuntu-latest
-        steps:
-        - name: Checkout
-          uses: actions/checkout@v1
+  build-and-deploy:
+    runs-on: ubuntu-latest
 
-        - name: Build and docker iamge
-          run:  docker build -t ${{ secrets.DOCKER_HUB_USERNAME}}/trackapp:latest .
-          
-        - name: push docker images to dockerhub
-          run: docker login -u ${{ secrets.DOCKER_HUB_USERNAME}} -p ${{ secrets.DOCKER_HUB_TOKEN}}
-               docker push ${{ secrets.DOCKER_HUB_USERNAME}}//trackapp:latest 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/trackapp:latest .
+
+      - name: Login to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/trackapp:latest
